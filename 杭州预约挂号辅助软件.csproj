@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{6653D66A-69C0-4382-BBE6-022BEA145312}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <OutputType>WinExe</OutputType>
+    <AssemblyName>杭州预约挂号辅助软件</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Platform)' == 'x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>HzHospitalRegister</RootNamespace>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>hospital.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="DevComponents.DotNetBar2" />
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>Dll\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>Dll\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Dll\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Model\ResponseReuslt.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="WindowsForm\AboutForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\area.cs" />
+    <Compile Include="Model\AreaList.cs" />
+    <Compile Include="WindowsForm\AuthCodeForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\DeptInfo.cs" />
+    <Compile Include="Model\DeptList.cs" />
+    <Compile Include="Model\DoctorInfo.cs" />
+    <Compile Include="WindowsForm\DonateForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\HosList.cs" />
+    <Compile Include="Model\HospitalInfo.cs" />
+    <Compile Include="Model\IntegratedArea.cs" />
+    <Compile Include="Model\IntergetedHospital.cs" />
+    <Compile Include="Model\IntergretedDepartment.cs" />
+    <Compile Include="HzHospitalRegister\Log.cs" />
+    <Compile Include="WindowsForm\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsForm\OrderForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\OrderInfo.cs" />
+    <Compile Include="Model\OrderSuccessInfo.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Model\RegDept.cs" />
+    <Compile Include="Model\RegDoctor.cs" />
+    <Compile Include="WindowsForm\RegisterControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="HzHospitalRegister\RegisterHelper.cs" />
+    <Compile Include="HzHospitalRegister\RegSetting.cs" />
+    <Compile Include="Model\SelectDoctor.cs" />
+    <Compile Include="WindowsForm\SettingForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WindowsForm\SuccessForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Model\UserInfo.cs" />
+    <Compile Include="Model\VisitTime.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.cs" />
+    <Compile Include="Utility\BeijingTime.cs" />
+    <Compile Include="Utility\HttpHelper.cs" />
+    <Compile Include="Utility\NTPClient.cs" />
+    <Compile Include="Utility\ObjectXmlSerializer.cs" />
+    <Compile Include="Utility\Win32Api.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="hospital.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsForm\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\alipay.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

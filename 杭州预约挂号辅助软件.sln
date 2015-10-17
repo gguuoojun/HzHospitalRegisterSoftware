@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "杭州预约挂号辅助软件", "杭州预约挂号辅助软件.csproj", "{6653D66A-69C0-4382-BBE6-022BEA145312}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6653D66A-69C0-4382-BBE6-022BEA145312}.Debug|x86.ActiveCfg = Debug|x86
+		{6653D66A-69C0-4382-BBE6-022BEA145312}.Debug|x86.Build.0 = Debug|x86
+		{6653D66A-69C0-4382-BBE6-022BEA145312}.Release|x86.ActiveCfg = Release|x86
+		{6653D66A-69C0-4382-BBE6-022BEA145312}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
