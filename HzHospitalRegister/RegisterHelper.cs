@@ -474,7 +474,8 @@ namespace HzHospitalRegister
 						HtmlNodeCollection htmlNodeCollection4 = htmlNode.SelectNodes("div[@class='m_r']/div[@class='m_r_1']/table/tr/td/input");
 						if (htmlNodeCollection4 == null)
 						{
-							goto IL_360;
+                            this.m_orderInfo.ResResult = ResponseReuslt.ERROR_PARSE;
+                            return m_orderInfo;
 						}
 						using (System.Collections.Generic.IEnumerator<HtmlNode> enumerator = ((System.Collections.Generic.IEnumerable<HtmlNode>)htmlNodeCollection4).GetEnumerator())
 						{
@@ -494,16 +495,13 @@ namespace HzHospitalRegister
 									this.m_orderInfo.VisitTimes.Add(visitTime);
 								}
 							}
-							goto IL_360;
 						}
-					}
-					this.m_orderInfo.ResResult = ResponseReuslt.ERROR_PARSE;
+					}				
 				}
 				else
 				{
 					this.m_orderInfo.ResResult = ResponseReuslt.NON_LOGIN;
 				}
-				IL_360:;
 			}
 			catch (System.Exception err)
 			{

@@ -125,11 +125,15 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="hospital.ico" />
+    <Content Include="说明文档.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WindowsForm\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WindowsForm\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

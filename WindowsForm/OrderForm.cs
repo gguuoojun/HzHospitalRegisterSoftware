@@ -112,6 +112,7 @@ namespace WindowsForm
 				SuccessForm successForm = new SuccessForm(orderSuccessInfo);
 				successForm.ShowDialog();
 				successForm.Dispose();
+                Log.WriteInfo("恭喜预约成功！");
 				base.Close();
 			}
 		}

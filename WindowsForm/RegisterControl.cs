@@ -11,6 +11,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Model;
 using HzHospitalRegister;
+using System.IO;
 
 namespace WindowsForm
 {
@@ -279,7 +280,7 @@ namespace WindowsForm
 					}));
 					System.Threading.Thread.Sleep(100);
 				}
-				else if (total <= 0.0 && total > -500.0)
+				else if (total <= 0.0 && total > -1000.0)
 				{
 					this.RefreshRegisterInfoInThread();
 					if (!this.m_bIsSuccessGetTicket)
@@ -292,14 +293,16 @@ namespace WindowsForm
 						{
 							this.btnRefresh.Text = string.Format("  停止<div align=\"center\"><font face=\"Times New Roman\" size=\"12\" color=\"red\">{0:f3}</font></div>", -total / 1000.0);
 						}));
-						System.Threading.Thread.Sleep(200);
+						System.Threading.Thread.Sleep(300);
 					}
 				}
-				else if (total < 300000.0)
-				{
+				else if (total < 500000.0)
+				{                   
 					this.RefreshRegisterInfoInThread();
 					if (!this.m_bIsSuccessGetTicket)
 					{
+                        //500秒以内每隔1秒刷新一次
+                        count = 1000f;
 						for (int i = 0; i < 10; i++)
 						{
 							if (base.IsDisposed)
@@ -312,7 +315,7 @@ namespace WindowsForm
 							}
 							base.Invoke(new Action(delegate
 							{
-								this.btnRefresh.Text = string.Format("  停止<div align=\"center\"><font face=\"Times New Roman\" size=\"12\" color=\"red\">{0:f1}</font></div>", -count / 1000f);
+								this.btnRefresh.Text = string.Format("  停止<div align=\"center\"><font face=\"Times New Roman\" size=\"12\" color=\"red\">{0:f1}</font></div>", count / 1000f);
 								this.btnRefresh.Refresh();
 							}));
 							count -= 100f;
@@ -325,6 +328,7 @@ namespace WindowsForm
 					this.RefreshRegisterInfoInThread();
 					if (!this.m_bIsSuccessGetTicket)
 					{
+                        //大于300秒后每隔3秒刷新一次
 						count = 3000f;
 						for (int j = 0; j < 30; j++)
 						{
@@ -436,23 +440,29 @@ namespace WindowsForm
 					object obj = regDept.ListDoctors[current.RowsIndex].Tags[current.CellIndex];
 					if (obj != null)
 					{
+                        Log.WriteInfo(string.Format("获取预约票源网址:{0}",(string)obj));
 						OrderInfo queryRegTime = this.m_regHelper.GetQueryRegTime((string)obj);
-						if (queryRegTime.ResResult == ResponseReuslt.SUCCESS)
-						{
-							this.m_bIsSuccessGetTicket = true;
-							this.m_ResetEvent.Reset();
-							this.m_sdPlayer.SoundLocation = RegSetting.Instance.SoundPath;
-							this.m_sdPlayer.Play();
-							OrderForm orderForm = new OrderForm(queryRegTime);
-							orderForm.TopMost = true;
-							orderForm.ShowDialog();
-							orderForm.Dispose();
-							this.cmbArea.Enabled = true;
-							this.cmbDepartment.Enabled = true;
-							this.cmbHospital.Enabled = true;
-							break;
-						}
-						if (queryRegTime.ResResult == ResponseReuslt.NON_LOGIN)
+                        if (queryRegTime.ResResult == ResponseReuslt.SUCCESS)
+                        {
+                            this.m_bIsSuccessGetTicket = true;
+                            this.m_ResetEvent.Reset();
+                            this.m_sdPlayer.SoundLocation = RegSetting.Instance.SoundPath;
+                            if (File.Exists(m_sdPlayer.SoundLocation))
+                            {
+                                this.m_sdPlayer.Play();
+                            }
+                           
+                            OrderForm orderForm = new OrderForm(queryRegTime);
+                            orderForm.TopMost = true;
+                            orderForm.ShowDialog();
+                            orderForm.Dispose();
+                            this.cmbArea.Enabled = true;
+                            this.cmbDepartment.Enabled = true;
+                            this.cmbHospital.Enabled = true;
+                            Log.WriteInfo(string.Format("获取预约票源网址:{0}", (string)obj));
+                            break;
+                        }                      
+						else if (queryRegTime.ResResult == ResponseReuslt.NON_LOGIN)
 						{
 							this.m_bIsSuccessGetTicket = true;
 							this.m_ResetEvent.Reset();
@@ -462,6 +472,10 @@ namespace WindowsForm
 							this.cmbHospital.Enabled = true;
 							break;
 						}
+                        else
+                        {
+                            Log.WriteError(string.Format("获取预约票源网址失败", (string)obj));
+                        }
 					}
 				}
 			}
@@ -520,10 +534,14 @@ namespace WindowsForm
 
 		private void cmbArea_DropDown(object sender, System.EventArgs e)
 		{
-			if (this.cmbArea.Items.Count == 1 && this.m_regHelper.GetArea() == null)
-			{
-				MessageBoxEx.Show("网络连接失败,无法获取地区信息！", "提示", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
-			}
+            if (this.cmbArea.Items.Count == 1)
+            {
+                InitAreaControl();
+                if (this.cmbArea.Items.Count == 1)
+                {
+                    MessageBoxEx.Show("网络连接失败,无法获取地区信息！", "提示", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Asterisk);
+                }
+            }
 		}
 
 		private void chkWaitforTime_CheckedChanged(object sender, System.EventArgs e)

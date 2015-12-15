@@ -30,6 +30,8 @@ namespace WindowsForm
 
 		private System.Diagnostics.Process _process;
 
+        private bool isConnectNtp = false;     //是否同步Ntp时间中
+
 		//private bool m_bIsRefreshTime;
 
 		private System.ComponentModel.IContainer components;
@@ -210,9 +212,13 @@ namespace WindowsForm
 		{
 			this._process = System.Diagnostics.Process.GetCurrentProcess();
 			RegSetting.Instance.ReadSetting();
+
+            m_bjTime.NTPServerTimeConnectedEventHander += NTPServerTimeConnected;
+            RefreshTime();
+
 			this.m_tdManager = new System.Threading.Thread(new System.Threading.ThreadStart(this.tmManager));
 			this.m_tdManager.IsBackground = true;
-			this.m_tdManager.Start();
+			this.m_tdManager.Start();            
 		}
 
 		private void btnLogin_Click(object sender, System.EventArgs e)
@@ -293,22 +299,17 @@ namespace WindowsForm
 
 		private void RefreshTime()
 		{
+            if (isConnectNtp)
+            {
+                return;
+            }
+
+            isConnectNtp = true;
 			this.lbItemTime.Text = "时间获取中...";
 			this.lbItemSpanTime.Text = string.Empty;
 			this.m_spanServer = System.TimeSpan.Zero;
-			if (this.m_bjTime.Connect())
-			{
-				this.m_spanServer = this.m_bjTime.BeijingTimeNow - System.DateTime.Now;
-				this.registerControl.SetSpanTime(this.m_spanServer);
-				if (this.m_spanServer.TotalSeconds > 0.0)
-				{
-					this.lbItemSpanTime.Text = string.Format("慢{0:f6}秒", this.m_spanServer.TotalSeconds);
-				}
-				else
-				{
-					this.lbItemSpanTime.Text = string.Format("快{0:f6}秒", System.Math.Abs(this.m_spanServer.TotalSeconds));
-				}
-			}			
+            this.metroStatusBar1.Refresh();
+            this.m_bjTime.GetNtpTime();          
 		}
 
 		private void tmManager()
@@ -321,23 +322,21 @@ namespace WindowsForm
 			{
 				while (true)
 				{
-                    if (!base.IsDisposed)
+                    if (!base.IsDisposed　&& !isConnectNtp)
                     {
                         base.Invoke(new Action(delegate
                         {
-                            if (this.m_bjTime.IsConnect)
+                            this.lbItemTime.Text = System.DateTime.Now.Add(this.m_spanServer).ToString();
+                            if (!this.m_bjTime.IsConnect)
                             {
-
-                                this.lbItemTime.Text = System.DateTime.Now.Add(this.m_spanServer).ToString();
-                            }
-                            else
-                            {
-                                this.lbItemTime.Text = "时间获取失败(点击以重新获取)";
+                                this.lbItemTime.Text += "(本地时间)  时间获取失败(点击以重新获取)";
                             }
                             this.metroStatusBar1.Refresh();
+                            
                         }));
+                        
                     }
-					
+                  
 					System.Threading.Thread.Sleep(1000);
 				}
 			}
@@ -346,6 +345,36 @@ namespace WindowsForm
 				Log.WriteError("貌似是窗口资源释放了线程还在访问，程序可以休息了", err);
 			}
 		}
+
+
+        private void NTPServerTimeConnected(bool isConnected, TimeSpan tsClock)
+        {
+            if (isConnected)
+            {
+                this.m_spanServer = tsClock;
+                this.registerControl.SetSpanTime(tsClock);
+
+                if (IsDisposed)
+                {
+                    return;
+                }
+
+                this.Invoke((Action)(() =>
+                    {
+                        if (this.m_spanServer.TotalSeconds > 0.0)
+                        {
+                            this.lbItemSpanTime.Text = string.Format("慢{0:f6}秒", this.m_spanServer.TotalSeconds);
+                        }
+                        else
+                        {
+                            this.lbItemSpanTime.Text = string.Format("快{0:f6}秒", System.Math.Abs(this.m_spanServer.TotalSeconds));
+                        }
+                        this.metroStatusBar1.Refresh();
+                    }));
+                
+            }
+            isConnectNtp = false;
+        }
 
 		private void lbItemTime_Click(object sender, System.EventArgs e)
 		{
@@ -765,7 +794,7 @@ namespace WindowsForm
             this.metroShell1.SystemText.QatPlaceBelowRibbonText = "&Place Quick Access Toolbar below the Ribbon";
             this.metroShell1.SystemText.QatRemoveItemText = "&Remove from Quick Access Toolbar";
             this.metroShell1.TabIndex = 0;
-            this.metroShell1.TabStripFont = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.metroShell1.TabStripFont = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             // 
             // metroShell2
             // 
@@ -777,7 +806,7 @@ namespace WindowsForm
             this.metroShell2.CaptionVisible = true;
             this.metroShell2.Controls.Add(this.metroTabPanel1);
             this.metroShell2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.metroShell2.Font = new System.Drawing.Font("SimSun", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.metroShell2.Font = new System.Drawing.Font("宋体", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.metroShell2.ForeColor = System.Drawing.Color.Black;
             this.metroShell2.HelpButtonText = "关于";
             this.metroShell2.Items.AddRange(new DevComponents.DotNetBar.BaseItem[] {
@@ -1043,6 +1072,7 @@ namespace WindowsForm
             // notifyIcon1
             // 
             this.notifyIcon1.ContextMenuStrip = this.contextMenuStrip1;
+            this.notifyIcon1.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon1.Icon")));
             this.notifyIcon1.Text = "杭州预约挂号辅助软件";
             this.notifyIcon1.Visible = true;
             this.notifyIcon1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon1_MouseDoubleClick);
@@ -1088,7 +1118,7 @@ namespace WindowsForm
             this.Controls.Add(this.metroStatusBar1);
             this.Controls.Add(this.metroShell2);
             this.DoubleBuffered = true;
-            this.Font = new System.Drawing.Font("SimSun", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.Font = new System.Drawing.Font("宋体", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
