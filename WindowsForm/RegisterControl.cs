@@ -446,9 +446,10 @@ namespace WindowsForm
                         {
                             this.m_bIsSuccessGetTicket = true;
                             this.m_ResetEvent.Reset();
-                            this.m_sdPlayer.SoundLocation = RegSetting.Instance.SoundPath;
-                            if (File.Exists(m_sdPlayer.SoundLocation))
+
+                            if (File.Exists(RegSetting.Instance.SoundPath))
                             {
+                                this.m_sdPlayer.SoundLocation = RegSetting.Instance.SoundPath;
                                 this.m_sdPlayer.Play();
                             }
                            
@@ -459,7 +460,7 @@ namespace WindowsForm
                             this.cmbArea.Enabled = true;
                             this.cmbDepartment.Enabled = true;
                             this.cmbHospital.Enabled = true;
-                            Log.WriteInfo(string.Format("获取预约票源网址:{0}", (string)obj));
+                            
                             break;
                         }                      
 						else if (queryRegTime.ResResult == ResponseReuslt.NON_LOGIN)

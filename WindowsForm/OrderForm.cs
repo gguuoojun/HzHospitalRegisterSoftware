@@ -84,6 +84,11 @@ namespace WindowsForm
 				listBoxItem.Tag = current;
 				this.lbxRegTime.Items.Add(listBoxItem);
 			}
+
+            if (lbxRegTime.Items.Count > 0)
+            {
+                lbxRegTime.SelectedIndex = 0;
+            }
 		}
 
 		private void tbOrderAuthCode_TextChanged(object sender, System.EventArgs e)
@@ -91,13 +96,14 @@ namespace WindowsForm
 			if (this.tbOrderAuthCode.Text.Length == 5)
 			{
 				this.lbMessage.Text = string.Empty;
-				if (this.m_regHelper.CheckOrderCode(this.m_infoOrder.Doctor.HospitalId, this.m_numId, this.tbOrderAuthCode.Text) != ResponseReuslt.SUCCESS)
-				{
-					this.lbMessage.Text = "验证码输入错误";
-					this.tbOrderAuthCode.Text = string.Empty;
-					this.pbAuthCode.Image = this.m_regHelper.GetOrderCode(this.m_infoOrder.Doctor.HospitalId, this.m_numId);
-					return;
-				}
+                //string result = this.m_regHelper.CheckOrderCode(this.m_infoOrder.Doctor.HospitalId, this.m_numId, this.tbOrderAuthCode.Text);
+                //if (result != "success")
+                //{
+                //    this.lbMessage.Text = "验证失败，来自服务端的返回结果：" + result;
+                //    this.tbOrderAuthCode.Text = string.Empty;
+                //    this.pbAuthCode.Image = this.m_regHelper.GetOrderCode(this.m_infoOrder.Doctor.HospitalId, this.m_numId);
+                //    return;
+                //}
 				this.lbMessage.Text = "提交中...";
 				OrderSuccessInfo orderSuccessInfo = this.m_regHelper.OrderSave(this.m_orderPost + "code=" + this.tbOrderAuthCode.Text);
 				if (orderSuccessInfo.ResResult != ResponseReuslt.SUCCESS)
@@ -114,23 +120,6 @@ namespace WindowsForm
 				successForm.Dispose();
                 Log.WriteInfo("恭喜预约成功！");
 				base.Close();
-			}
-		}
-
-		private void tbOrderAuthCode_Enter(object sender, System.EventArgs e)
-		{
-			if (this.lbxRegTime.SelectedIndex >= 0 && this.m_selectValue != this.m_numId)
-			{
-				this.m_orderPost = this.m_regHelper.CheckOrder(this.m_infoOrder, (VisitTime)((ListBoxItem)this.lbxRegTime.SelectedItem).Tag);
-				if (this.m_orderPost.Length == 0)
-				{
-					this.lbMessage.Text = "订单验证失败,请刷新验证码";
-					return;
-				}
-				this.tbOrderAuthCode.Text = string.Empty;
-				this.lbMessage.Text = string.Empty;
-				this.pbAuthCode.Image = this.m_regHelper.GetOrderCode(this.m_infoOrder.Doctor.HospitalId, this.m_numId);
-				this.m_selectValue = this.m_numId;
 			}
 		}
 
@@ -158,6 +147,17 @@ namespace WindowsForm
 		private void lbxRegTime_SelectedIndexChanged(object sender, System.EventArgs e)
 		{
 			this.m_numId = ((VisitTime)((ListBoxItem)this.lbxRegTime.SelectedItem).Tag).NumId;
+
+            this.m_orderPost = this.m_regHelper.CheckOrder(this.m_infoOrder, (VisitTime)((ListBoxItem)this.lbxRegTime.SelectedItem).Tag);
+            if (this.m_orderPost.Length == 0)
+            {
+                this.lbMessage.Text = "订单验证失败,请刷新验证码";
+                return;
+            }
+            this.tbOrderAuthCode.Text = string.Empty;
+            this.lbMessage.Text = string.Empty;
+            this.pbAuthCode.Image = this.m_regHelper.GetOrderCode(this.m_infoOrder.Doctor.HospitalId, this.m_numId);
+            this.m_selectValue = this.m_numId;
 		}
 
 		protected override void Dispose(bool disposing)
@@ -233,7 +233,6 @@ namespace WindowsForm
 			this.tbOrderAuthCode.Size = new System.Drawing.Size(93, 23);
 			this.tbOrderAuthCode.TabIndex = 5;
 			this.tbOrderAuthCode.TextChanged += new System.EventHandler(this.tbOrderAuthCode_TextChanged);
-			this.tbOrderAuthCode.Enter += new System.EventHandler(this.tbOrderAuthCode_Enter);
 			this.labelX3.BackColor = System.Drawing.Color.Transparent;
 			this.labelX3.BackgroundStyle.CornerType = eCornerType.Square;
 			this.labelX3.ForeColor = System.Drawing.Color.Black;

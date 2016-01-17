@@ -536,9 +536,9 @@ namespace HzHospitalRegister
 			return result;
 		}
 
-		public ResponseReuslt CheckOrderCode(string hospitalId, string numId, string capCode)
+		public string CheckOrderCode(string hospitalId, string numId, string capCode)
 		{
-			ResponseReuslt result = ResponseReuslt.SUCCESS;
+            string result;
 			try
 			{
 				System.Globalization.CultureInfo provider = new System.Globalization.CultureInfo("en-US");
@@ -553,14 +553,11 @@ namespace HzHospitalRegister
 				this._httpItem.Method = "GET";
 				this._httpItem.ContentType = "text/html";
 				HttpResult html = this._httpHelper.GetHtml(this._httpItem);
-				if (html.Html != "success")
-				{
-					result = ResponseReuslt.ERROR_FAIL;
-				}
+				result = html.Html;			
 			}
 			catch (System.Exception err)
 			{
-				result = ResponseReuslt.ERROR_UNKNOW;
+                result = err.Message;
 				Log.WriteError("验证码验证失败", err);
 			}
 			return result;
@@ -651,10 +648,12 @@ namespace HzHospitalRegister
 					else
 					{
 						orderSuccessInfo.ResResult = ResponseReuslt.ERROR_FAIL;
+                        Log.WriteError("验证码提交失败：手速太慢");
 					}
 				}
 				else
 				{
+                    Log.WriteError(string.Format("验证码提交失败：返回状态码 {0}", html.StatusCode));
 					orderSuccessInfo.ResResult = ResponseReuslt.NON_NET;
 				}
 			}

@@ -359,7 +359,8 @@ namespace Utility
 				System.Net.IPHostEntry hostEntry = System.Net.Dns.GetHostEntry(this.TimeServer);
 				System.Net.IPEndPoint endPoint = new System.Net.IPEndPoint(hostEntry.AddressList[0], 123);
 				System.Net.Sockets.UdpClient udpClient = new System.Net.Sockets.UdpClient();
-                udpClient.Client.ReceiveTimeout = 3000;               
+                udpClient.Client.ReceiveTimeout = 3000;
+                udpClient.Client.SendTimeout = 3000;
 				udpClient.Connect(endPoint);
 				this.Initialize();
 				udpClient.Send(this.NTPData, this.NTPData.Length);

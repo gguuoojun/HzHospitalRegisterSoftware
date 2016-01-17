@@ -44,7 +44,7 @@ namespace Utility
 
 		private BeijingTime()
 		{
-            this._client = new NTPClient(HOST);
+			this._client = new NTPClient(HOST);
             syncThread = new Thread(new ThreadStart(SyncTime));
             syncThread.IsBackground = true;
             syncThread.Start();
@@ -60,18 +60,22 @@ namespace Utility
             autoEvent.Set();
         }
 
-		private void Connect()
+		private bool Connect()
 		{
+			bool result;
 			try
 			{
 				this._client.Connect();
 				this._IsConnect = true;
 				this._tsClock = new System.TimeSpan((long)this._client.LocalClockOffset);
+				result = true;
 			}
 			catch (System.Exception)
 			{
 				this._IsConnect = false;
+				result = false;
 			}
+			return result;
 		}
 
         /// <summary>
@@ -91,7 +95,7 @@ namespace Utility
 
                 if (NTPServerTimeConnectedEventHander != null)
                 {
-                    NTPServerTimeConnectedEventHander(_IsConnect, _tsClock);
+                    NTPServerTimeConnectedEventHander(IsConnect, _tsClock);
                 }
             }           
         }
