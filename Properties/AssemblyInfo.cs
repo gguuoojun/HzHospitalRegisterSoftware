@@ -6,14 +6,14 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 
-[assembly: System.Reflection.AssemblyVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyVersion("1.1.1.0")]
 [assembly: XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
 [assembly: System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
 [assembly: System.Reflection.AssemblyCompany("")]
 [assembly: System.Reflection.AssemblyConfiguration("")]
 [assembly: System.Reflection.AssemblyCopyright("Copyright ©  2015 by 日行一米")]
 [assembly: System.Reflection.AssemblyDescription("")]
-[assembly: System.Reflection.AssemblyFileVersion("1.1.0.0")]
+[assembly: System.Reflection.AssemblyFileVersion("1.1.1.0")]
 [assembly: System.Reflection.AssemblyProduct("杭州预约挂号辅助软件")]
 [assembly: System.Reflection.AssemblyTitle("杭州预约挂号辅助软件")]
 [assembly: System.Reflection.AssemblyTrademark("")]

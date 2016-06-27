@@ -332,17 +332,46 @@ namespace HzHospitalRegister
 			return result;
 		}
 
+        private string GetLoginRandom()
+        {
+            this._httpItem.URL = "http://www.zj12580.cn/login";
+            this._httpItem.ResultType = ResultType.String;
+            this._httpItem.Method = "GET";
+            this._httpItem.Postdata = string.Empty;
+            this._httpItem.ContentType = "text/html";
+            HttpResult html = this._httpHelper.GetHtml(this._httpItem);
+            this._htmlDoc.LoadHtml(html.Html);
+            HtmlNode htmlNode = this._htmlDoc.DocumentNode.SelectSingleNode("/html/body/div[@id='middle_login']/div[@class='right_box']/input");
+            if (htmlNode != null)
+            {
+                return htmlNode.Attributes[0].Value;
+            }
+            else
+            {
+                return string.Empty;
+            }
+            
+        }
+
 		public string Login(string userName, string passwd, string authCode)
 		{
 			string result = string.Empty;
 			try
 			{
+                string random = GetLoginRandom();
+
+                if(string.IsNullOrEmpty(random))
+                {
+                    result = "网路连接有误，请重新登录!";
+                    return result;
+                }
+
 				this.m_bIsLogin = false;
 				this._httpItem.URL = "http://www.zj12580.cn/login";
 				this._httpItem.ResultType = ResultType.String;
 				this._httpItem.Method = "POST";
 				this._httpItem.Allowautoredirect = false;
-				this._httpItem.Postdata = string.Format("username={0}&password={1}&captcha={2}", userName, passwd, authCode);
+                this._httpItem.Postdata = string.Format("random={0}&username={1}&password={2}&captcha={3}", random, userName, passwd, authCode);
 				this._httpItem.ContentType = "application/x-www-form-urlencoded";
 				HttpResult html = this._httpHelper.GetHtml(this._httpItem);
 				if (html.RedirectUrl == "http://www.zj12580.cn/")
